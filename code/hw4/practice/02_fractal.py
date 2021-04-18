@@ -10,6 +10,7 @@ point_0 = sd.get_point(600, 5)
 
 
 def branch(stPoint, ang, vLen, aa):
+
     if vLen < 1:
         return
     vector = sd.vector(stPoint, ang, vLen)
@@ -19,12 +20,12 @@ def branch(stPoint, ang, vLen, aa):
     branch(sp, a, vl, aa)
 
 
-for aa in range(0, 51, 10):
+for aa in range(0, 21, 10):
     if aa == 0:
         continue
     branch(point_0, 90, 200, aa)
 
-for aa in range(-50, 0, 10):
+for aa in range(-20, 0, 10):
     if aa == 0:
         continue
     branch(point_0, 90, 200, aa)
