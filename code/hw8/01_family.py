@@ -50,7 +50,9 @@ class House:
         self.food = 50
         self.dust = 0
         self.total_money_counter = 0
-        self.total_food_counter = 0 
+        self.total_food_counter = 0
+        self.cat_food = 30
+        self.total_cat_food_counter = 0
     
     def __str__(self):
         res = self.name + str(self.money) + "$" + " #" + str(self.food) +"=food"
@@ -162,7 +164,9 @@ class Wife(Animate):
             elif self.home.dust >= 80:
                 self.clean_house()       
             elif self.home.food <= 60:
-                self.shopping()                
+                self.shopping()
+            elif self.home.cat_food <= 20:
+                self.cat_shopping()            
             
             
             elif self.home.money >= self.fur_coat_cost + 100:
@@ -197,6 +201,14 @@ class Wife(Animate):
         # else:
         #     print("no money no honey") # gaç
 
+    def cat_shopping(self):
+        self.fullness -= 10
+        self.happiness += 20
+        self.action = "cat shopp"
+        if self.home.money >= 50:
+            self.home.money -= 50
+            self.home.cat_food += 50
+            self.home.total_cat_food_counter += 50
 
     def buy_fur_coat(self):
         self.fullness -= 10
@@ -210,33 +222,6 @@ class Wife(Animate):
         self.happiness += 20
         print("house cleaned")
         self.cleaning_counter += 1
-
-
-home = House()
-hsb = Husband(name='hsb')
-wf = Wife(name='wf')
-
-hsb.go_in_the_house(home)
-wf.go_in_the_house(home)
-
-# serge.gaming()
-# serge.work()
-# serge.eat()
-for day in range(365):
-    
-    print("=" * 40, day,  "=" * 40)
-    hsb.act()
-    wf.act()
-    print(hsb)
-    print(wf)
-
-print("now dust", hsb.home.dust)
-print("total fur coat", wf.fur_coat_counter)
-print("cleaned: ", wf.cleaning_counter)
-print("total money ",home.total_money_counter)
-print("total food  ",home.total_food_counter)
-
-
 
 
 # for day in range(365):
@@ -266,7 +251,8 @@ print("total food  ",home.total_food_counter)
 #   еда для кота (в начале - 30)
 #
 # У кота есть имя и степень сытости (в начале - 30)
-# Любое действие кота, кроме "есть", приводит к уменьшению степени сытости на 10 пунктов
+# Любое действие ко
+# водит к уменьшению степени сытости на 10 пунктов
 # Еда для кота покупается за деньги: за 10 денег 10 еды.
 # Кушает кот максимум по 10 единиц еды, степень сытости растет на 2 пункта за 1 пункт еды.
 # Степень сытости не должна падать ниже 0, иначе кот умрет от голода.
@@ -274,22 +260,72 @@ print("total food  ",home.total_food_counter)
 # Если кот дерет обои, то грязи становится больше на 5 пунктов
 
 
-class Cat:
+class Cat(Animate):
 
-    def __init__(self):
-        pass
+    def __init__(self, name):
+        super().__init__(name = name)
+
+    def __str__(self):
+        res = super().__str__()
+        a = res + " | act:{}, happ{}, fullnes{}, catFood{}".format(self.action, self.happiness, self.fullness, self.home.cat_food)
+        return a
 
     def act(self):
-        pass
+        if self.fullness <= 20:
+            self.eat()
+        else:
+            self.fullness -= 10
+            self.home.cat_food -= 10
+            ch = randint(1,2)
+            if ch == 1:
+                self.sleep()
+            elif ch == 2:
+                self.soil()        
 
     def eat(self):
-        pass
+        self.fullness += 10
+        self.happiness += 10 * 2
+        self.action = "eating"
 
     def sleep(self):
-        pass
+        self.happiness += 5
+        self.action = "sleepy"
 
     def soil(self):
-        pass
+        self.home.dust += 5
+        self.action = "chiling"
+
+
+home = House()
+hsb = Husband(name='hsb')
+wf = Wife(name='wf')
+
+hsb.go_in_the_house(home)
+wf.go_in_the_house(home)
+
+murzik = Cat(name='Мурзик')
+murzik.go_in_the_house(home)
+
+# serge.gaming()
+# serge.work()
+# serge.eat()
+for day in range(366):
+    
+    print("=" * 40, day,  "=" * 40)
+    hsb.act()
+    wf.act()
+    murzik.act()
+    print(hsb)
+    print(wf)
+    print(murzik)
+
+print("now dust", hsb.home.dust)
+print("total fur coat", wf.fur_coat_counter)
+print("cleaned: ", wf.cleaning_counter)
+print("total money ",home.total_money_counter)
+print("total food  ",home.total_food_counter)
+print("total cat food  ",home.total_cat_food_counter)
+
 
 
 ######################################################## Часть вторая бис
