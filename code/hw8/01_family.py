@@ -165,7 +165,7 @@ class Wife(Animate):
                 self.clean_house()       
             elif self.home.food <= 60:
                 self.shopping()
-            elif self.home.cat_food <= 20:
+            elif self.home.cat_food <= 30:
                 self.cat_shopping()            
             
             
@@ -296,35 +296,7 @@ class Cat(Animate):
         self.action = "chiling"
 
 
-home = House()
-hsb = Husband(name='hsb')
-wf = Wife(name='wf')
 
-hsb.go_in_the_house(home)
-wf.go_in_the_house(home)
-
-murzik = Cat(name='Мурзик')
-murzik.go_in_the_house(home)
-
-# serge.gaming()
-# serge.work()
-# serge.eat()
-for day in range(366):
-    
-    print("=" * 40, day,  "=" * 40)
-    hsb.act()
-    wf.act()
-    murzik.act()
-    print(hsb)
-    print(wf)
-    print(murzik)
-
-print("now dust", hsb.home.dust)
-print("total fur coat", wf.fur_coat_counter)
-print("cleaned: ", wf.cleaning_counter)
-print("total money ",home.total_money_counter)
-print("total food  ",home.total_food_counter)
-print("total cat food  ",home.total_cat_food_counter)
 
 
 
@@ -339,22 +311,27 @@ print("total cat food  ",home.total_cat_food_counter)
 # отличия от взрослых - кушает максимум 10 единиц еды,
 # степень счастья  - не меняется, всегда ==100 ;)
 
-class Child:
+class Child(Animate):
 
-    def __init__(self):
-        pass
+    def __init__(self, name, fullnes = 100 ):
+        super().__init__(name)
 
     def __str__(self):
-        return super().__str__()
+        return "{}-{} happ:)){}, fullns{}".format(self.name, self.action, self.happiness, self.fullness)
 
     def act(self):
-        pass
+        if self.fullness <= 60:
+            self.eat()
+        else:
+            self.sleep()
 
     def eat(self):
-        pass
+        self.fullness = 100
+        self.action = "ma ma"
 
     def sleep(self):
-        pass
+        self.fullness -= 10
+        self.action = "grose cleine"
 
 
 # TODO после реализации второй части - отдать на проверку учителем две ветки
@@ -384,6 +361,40 @@ class Child:
 # #     cprint(kolya, color='cyan')
 # #     cprint(murzik, color='cyan')
 
+
+home = House()
+hsb = Husband(name='hsb')
+wf = Wife(name='wf')
+bb = Child("baby")
+
+hsb.go_in_the_house(home)
+wf.go_in_the_house(home)
+bb.go_in_the_house(home)
+
+murzik = Cat(name='Мурзик')
+murzik.go_in_the_house(home)
+
+# serge.gaming()
+# serge.work()
+# serge.eat()
+for day in range(366):
+    
+    print("=" * 40, day,  "=" * 40)
+    hsb.act()
+    wf.act()
+    bb.act()
+    murzik.act()
+    print(hsb)
+    print(wf)
+    print(bb)
+    print(murzik)
+
+print("now dust", hsb.home.dust)
+print("total fur coat", wf.fur_coat_counter)
+print("cleaned: ", wf.cleaning_counter)
+print("total money ",home.total_money_counter)
+print("total food  ",home.total_food_counter)
+print("total cat food  ",home.total_cat_food_counter)
 
 # Усложненное задание (делать по желанию)
 #
