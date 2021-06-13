@@ -56,7 +56,7 @@ def validate_line(l):
             raise NotEmailError()
         
         if not 10 <= int(l[2]) < 99:
-            raise ValueError("age error") # age: "" --> invalid literal for int() with base 10: ''
+            raise ValueError("age error")  # age: "" --> invalid literal for int() with base 10: ''
         
         return True
     except ValueError as e:
@@ -66,8 +66,9 @@ def validate_line(l):
     except NotEmailError as e:
         return e
 
+
 def print_logins(mess, data):
-    if mess == True:
+    if mess:
         file = open("validLogins.txt", "a", encoding="utf8")
         file.write(f"{data}\n")
         file.close()
@@ -76,6 +77,7 @@ def print_logins(mess, data):
         file.write(f"{data} '{mess}'\n")
         file.close()
 
+
 vals = []
 with open("registrations.txt", mode="r", encoding="utf8") as f:
     for line in f:
@@ -83,7 +85,7 @@ with open("registrations.txt", mode="r", encoding="utf8") as f:
         line = line[:-1]
         vals.append(line.split(" "))
         res = validate_line(vals[0])
-        if res == True:
+        if res:
             # print("OK")
             print_logins(res, line)
         else:
