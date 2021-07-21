@@ -1,13 +1,11 @@
 # from urllib.request import urlopen
-# raw code 23 sec
-# multi threading 13 sec --> if add threading in method run --> 3 sec
-# multi procc 3 sec
 
 from extractor import LinkExctractor
 from utils import time_track
 
 import requests
 
+import threading
 
 sites = [
     # "https://www.google.com"
@@ -20,10 +18,12 @@ sites = [
 ]
 
 
-class PageSizer:
-    def __init__(self, url):
+class PageSizer(threading.Thread):
+    def __init__(self, url, go_ahead=True, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.url = url
         self.total_bytes = 0
+        self.go_ahead = go_ahead
 
     def run(self):
         self.total_bytes = 0
@@ -31,12 +31,16 @@ class PageSizer:
         if html_data is None:
             return
         self.total_bytes += len(html_data)
-        exctractor = LinkExctractor(self.url)
-        exctractor.feed(html_data)
-        for link in exctractor.links:
-            extra_data = self._get_html(link)
-            if extra_data:
-                self.total_bytes += len(extra_data)
+        if self.go_ahead:
+            exctractor = LinkExctractor(self.url)
+            exctractor.feed(html_data)
+            sizers = [PageSizer(link, False) for link in exctractor.links]
+            for sizer in sizers:
+                sizer.start()
+            for sizer in sizers:
+                sizer.join()
+            for sizer in sizers:
+                self.total_bytes += sizer.total_bytes
 
     def _get_html(self, url):
         try:
@@ -50,10 +54,13 @@ class PageSizer:
 
 @time_track
 def main():
-    sizers = [PageSizer(url) for url in sites]
+    sizers = [PageSizer(url=url) for url in sites]
 
     for sizer in sizers:
-        sizer.run()
+        sizer.start()
+    for sizer in sizers:
+        sizer.join()
+
     for sizer in sizers:
         print(
             f"For url {sizer.url} need {sizer.total_bytes // 1024}",
